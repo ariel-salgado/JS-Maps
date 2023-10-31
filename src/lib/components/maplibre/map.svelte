@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Action } from 'svelte/action';
-	import { Map, type LngLatLike, type IControl } from 'maplibre-gl';
+	import { Map, type LngLatLike, type IControl, type StyleSpecification } from 'maplibre-gl';
 	import { MapLibreSearchControl } from '@stadiamaps/maplibre-search-box';
 	import { default as MapboxDraw, default as Draw } from '@mapbox/mapbox-gl-draw';
 
@@ -18,10 +18,30 @@
 	// @ts-ignore - constants are readonly
 	MapboxDraw.constants.classes.CONTROL_GROUP = 'maplibregl-ctrl-group';
 
+	const style: StyleSpecification = {
+		version: 8,
+		sources: {
+			osm: {
+				type: 'raster',
+				tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'],
+				tileSize: 256,
+				attribution: '&copy; OpenStreetMap Contributors',
+				maxzoom: 19
+			}
+		},
+		layers: [
+			{
+				id: 'osm',
+				type: 'raster',
+				source: 'osm' // This must match the source key above
+			}
+		]
+	};
+
 	const initMap: Action<HTMLDivElement> = (mapContainer: HTMLDivElement) => {
 		map = new Map({
 			container: mapContainer,
-			style: 'https://tiles.stadiamaps.com/styles/outdoors.json',
+			style: style,
 			center: center,
 			zoom: zoom
 		});
